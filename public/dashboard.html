@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | TrustVault</title>
+  <meta name="description" content="TrustVault Organization Dashboard and Storage Overview.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Navbar -->
+    <header>
+      <nav class="navbar" aria-label="Main Navigation">
+        <a href="/dashboard.html" class="nav-brand">
+          <div class="brand-icon">T</div>
+          <span>TrustVault</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/dashboard.html" class="nav-link active">Dashboard</a></li>
+          <li><a href="/documents.html" class="nav-link">Documents</a></li>
+          <li><a href="/members.html" class="nav-link" id="nav-members-link" style="display: none;">Members</a></li>
+          <li><a href="/audit.html" class="nav-link" id="nav-audit-link" style="display: none;">Audit Trail</a></li>
+        </ul>
+
+        <div class="nav-right">
+          <div class="user-profile-badge">
+            <div class="user-meta">
+              <span class="user-name" id="nav-user-name">Loading...</span>
+              <span class="org-name" id="nav-org-name">Organization</span>
+            </div>
+            <span class="role-badge role-admin" id="nav-role-badge">ADMIN</span>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-logout" title="Sign out of TrustVault">Sign Out</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+      <!-- Welcome Header -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 class="panel-title" style="font-size: 1.85rem;" id="dashboard-welcome">Security Overview</h1>
+          <p class="panel-subtitle" id="dashboard-subtitle">Multi-tenant vault metrics and recent file operations.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <a href="/documents.html" class="btn btn-primary" id="btn-quick-docs">
+            Go to Documents &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Live Database Metrics -->
+      <section class="stats-grid" aria-label="Organization Metrics">
+        <div class="stat-card">
+          <span class="stat-label">Accessible Documents</span>
+          <span class="stat-value" id="stat-docs">-</span>
+          <span class="stat-indicator">Active in repository</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">Organization Members</span>
+          <span class="stat-value" id="stat-members">-</span>
+          <span class="stat-indicator">Enrolled identity profiles</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">Total Vault Storage</span>
+          <span class="stat-value" id="stat-storage">-</span>
+          <span class="stat-indicator">Private disk allocation</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">Shared With Me</span>
+          <span class="stat-value" id="stat-shared">-</span>
+          <span class="stat-indicator">Delegated access items</span>
+        </div>
+      </section>
+
+      <!-- Quick Upload Section for Admins & Editors -->
+      <section class="panel" id="section-quick-upload" style="display: none;">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title" style="font-size: 1.15rem;">Fast Document Deposit</h2>
+            <p class="panel-subtitle">Upload a secure document directly to your private vault storage.</p>
+          </div>
+        </div>
+
+        <form id="form-quick-upload">
+          <div class="dropzone" id="quick-dropzone">
+            <div class="dropzone-icon">📁</div>
+            <div class="dropzone-text" id="quick-dropzone-text">Click or drag & drop files here to upload</div>
+            <div class="dropzone-hint">PDF, Images, Markdown, Text, JSON, DOCX up to 20MB</div>
+            <input type="file" id="quick-file-input" style="display: none;" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.svg,.txt,.md,.json,.csv,.xml,.doc,.docx">
+          </div>
+
+          <div id="quick-upload-meta" style="display: none; margin-top: 1rem;">
+            <div class="form-group">
+              <label for="quick-doc-title" class="form-label">Document Title (Optional)</label>
+              <input type="text" id="quick-doc-title" class="form-control" placeholder="e.g. Architecture Security Assessment">
+            </div>
+            <button type="submit" class="btn btn-primary" id="btn-submit-quick-upload">
+              Upload to Secure Storage
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Two-column grid for Recent Documents and Recent Audit Activity -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+        <!-- Recent Documents -->
+        <section class="panel" style="margin-bottom: 0;">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title" style="font-size: 1.15rem;">Recent Documents</h2>
+              <p class="panel-subtitle">Latest additions to your organization.</p>
+            </div>
+            <a href="/documents.html" class="btn btn-ghost btn-sm">View All &rarr;</a>
+          </div>
+
+          <div id="recent-docs-container">
+            <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              <span class="spinner"></span> Loading repository records...
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Activity Feed -->
+        <section class="panel" style="margin-bottom: 0;">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title" style="font-size: 1.15rem;">Recent Activity</h2>
+              <p class="panel-subtitle">Audited events and platform actions.</p>
+            </div>
+            <a href="/audit.html" class="btn btn-ghost btn-sm" id="btn-view-all-audit" style="display: none;">View Audit &rarr;</a>
+          </div>
+
+          <div id="recent-activity-container">
+            <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              <span class="spinner"></span> Loading activity logs...
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

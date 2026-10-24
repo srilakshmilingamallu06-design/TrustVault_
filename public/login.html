@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | TrustVault</title>
+  <meta name="description" content="Sign in to your TrustVault organization account.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout" style="justify-content: center; align-items: center; padding: 2rem 1rem;">
+    <!-- Brand Header -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <a href="/" style="display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none;">
+        <div class="brand-icon" style="width: 38px; height: 38px; font-size: 1.15rem;">T</div>
+        <span style="font-size: 1.65rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.03em;">TrustVault</span>
+      </a>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">
+        Multi-Tenant Zero-Trust Document Infrastructure
+      </p>
+    </div>
+
+    <!-- Auth Card -->
+    <main class="panel" style="width: 100%; max-width: 440px; margin-bottom: 0; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);">
+      <!-- Auth Switcher Tabs -->
+      <div class="tabs" style="margin-bottom: 1.75rem;" role="tablist">
+        <a href="/login.html" class="tab-btn active" id="tab-login-btn" role="tab" aria-selected="true" style="flex: 1; text-align: center; text-decoration: none;">
+          Sign In
+        </a>
+        <a href="/register.html" class="tab-btn" id="tab-register-btn" role="tab" aria-selected="false" style="flex: 1; text-align: center; text-decoration: none;">
+          Create Organization
+        </a>
+      </div>
+
+      <!-- Alert / Error message container -->
+      <div id="auth-alert" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.875rem; margin-bottom: 1.25rem; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: var(--status-danger);">
+      </div>
+
+      <!-- Login Form -->
+      <form id="form-login" novalidate>
+        <div class="form-group">
+          <label for="login-email" class="form-label">Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="name@company.com" autocomplete="email" required autofocus>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password" class="form-label">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-submit-login" style="width: 100%; margin-top: 0.5rem;">
+          Sign In to Vault
+        </button>
+
+        <div style="text-align: center; margin-top: 1.25rem;">
+          <span style="color: var(--text-muted); font-size: 0.85rem;">New team or organization?</span>
+          <a href="/register.html" id="link-to-register" style="color: var(--accent-primary); font-size: 0.85rem; font-weight: 500; margin-left: 0.35rem; text-decoration: none;">Create Organization &rarr;</a>
+        </div>
+      </form>
+    </main>
+
+    <!-- Navigation Back Link -->
+    <div style="margin-top: 1.5rem; text-align: center;">
+      <a href="/" style="font-size: 0.85rem; color: var(--text-muted); text-decoration: none;">&larr; Return to Overview</a>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      function showAlert(msg) {
+        const alertBox = document.getElementById('auth-alert');
+        if (alertBox) {
+          alertBox.textContent = msg;
+          alertBox.style.display = 'block';
+        }
+      }
+
+      function clearAlert() {
+        const alertBox = document.getElementById('auth-alert');
+        if (alertBox) {
+          alertBox.textContent = '';
+          alertBox.style.display = 'none';
+        }
+      }
+
+      async function handleLoginSubmit(e) {
+        e.preventDefault();
+        clearAlert();
+
+        const emailInput = document.getElementById('login-email');
+        const passwordInput = document.getElementById('login-password');
+        const email = emailInput ? emailInput.value.trim() : '';
+        const password = passwordInput ? passwordInput.value : '';
+        const btn = document.getElementById('btn-submit-login');
+
+        if (!email || !password) {
+          showAlert('Please enter both email and password.');
+          if (!email && emailInput) emailInput.focus();
+          else if (!password && passwordInput) passwordInput.focus();
+          return;
+        }
+
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span class="spinner" style="width: 14px; height: 14px;"></span> Authenticating...';
+        }
+
+        try {
+          const result = await window.TrustVault.auth.login(email, password);
+          if (!result.success) {
+            showAlert(result.error || 'Invalid email or password.');
+            if (btn) {
+              btn.disabled = false;
+              btn.textContent = 'Sign In to Vault';
+            }
+          }
+        } catch (err) {
+          showAlert('Network or server error during sign in. Please try again.');
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Sign In to Vault';
+          }
+        }
+      }
+
+      window.TrustVault.onReady(() => {
+        window.TrustVault.auth.init({ requireAuth: false });
+
+        const formLogin = document.getElementById('form-login');
+        if (formLogin) {
+          formLogin.addEventListener('submit', handleLoginSubmit);
+        }
+
+        // Check if redirected with hash #register
+        if (window.location.hash === '#register') {
+          window.location.replace('/register.html');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

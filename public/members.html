@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members &amp; Roles | TrustVault</title>
+  <meta name="description" content="Manage organization members, identity access, and role permissions.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Navbar -->
+    <header>
+      <nav class="navbar" aria-label="Main Navigation">
+        <a href="/dashboard.html" class="nav-brand">
+          <div class="brand-icon">T</div>
+          <span>TrustVault</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/dashboard.html" class="nav-link">Dashboard</a></li>
+          <li><a href="/documents.html" class="nav-link">Documents</a></li>
+          <li><a href="/members.html" class="nav-link active" id="nav-members-link">Members</a></li>
+          <li><a href="/audit.html" class="nav-link" id="nav-audit-link">Audit Trail</a></li>
+        </ul>
+
+        <div class="nav-right">
+          <div class="user-profile-badge">
+            <div class="user-meta">
+              <span class="user-name" id="nav-user-name">Loading...</span>
+              <span class="org-name" id="nav-org-name">Organization</span>
+            </div>
+            <span class="role-badge role-admin" id="nav-role-badge">ADMIN</span>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-logout" title="Sign out of TrustVault">Sign Out</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 class="panel-title" style="font-size: 1.85rem;">Organization Members</h1>
+          <p class="panel-subtitle">Manage teammate invitations, role delegations, and authentication permissions.</p>
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary" id="btn-open-add-member">
+            + Add Colleague
+          </button>
+        </div>
+      </div>
+
+      <!-- Members Table -->
+      <section class="panel" style="padding: 0; overflow: hidden;" aria-label="Members List">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="min-width: 200px;">Member Name</th>
+                <th style="min-width: 200px;">Work Email</th>
+                <th style="width: 140px;">Current Role</th>
+                <th style="width: 150px;">Date Enrolled</th>
+                <th style="width: 150px;">Last Login</th>
+                <th style="width: 200px; text-align: right;">Role Management</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-members">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                  <span class="spinner"></span> Loading member credentials...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Add Member Modal -->
+    <div class="modal-overlay" id="modal-add-member" role="dialog" aria-modal="true" aria-labelledby="modal-add-member-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-add-member-title">Add Organization Member</h2>
+          <button type="button" class="modal-close" id="btn-close-add-member" aria-label="Close modal">&times;</button>
+        </div>
+
+        <form id="form-add-member">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="input-member-name" class="form-label">Full Name</label>
+              <input type="text" id="input-member-name" class="form-control" placeholder="Marcus Vance" required autofocus>
+            </div>
+
+            <div class="form-group">
+              <label for="input-member-email" class="form-label">Work Email</label>
+              <input type="email" id="input-member-email" class="form-control" placeholder="marcus@organization.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="input-member-password" class="form-label">Temporary Password (min 8 chars)</label>
+              <input type="password" id="input-member-password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+              <label for="select-member-role" class="form-label">Assigned Role</label>
+              <select id="select-member-role" class="form-control" required>
+                <option value="viewer">Viewer (Read-only access to shared files)</option>
+                <option value="editor">Editor (Upload, manage, and share documents)</option>
+                <option value="admin">Administrator (Full control, members, and audit logs)</option>
+              </select>
+            </div>
+
+            <div id="add-member-alert" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-top: 1rem; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: var(--status-danger);">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-add-member">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-add-member">
+              Add Member
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/members.js"></script>
+</body>
+</html>

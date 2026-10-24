@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustVault | Secure Multi-Tenant Document Sharing</title>
+  <meta name="description" content="TrustVault is an enterprise-grade, multi-tenant document sharing platform featuring strict role-based access control and tamper-evident audit trails.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Navigation -->
+    <header>
+      <nav class="navbar" aria-label="Main Navigation">
+        <div class="nav-brand">
+          <div class="brand-icon">T</div>
+          <span>TrustVault</span>
+        </div>
+        <div class="nav-right" id="nav-actions">
+          <a href="/login.html" class="btn btn-ghost btn-sm" id="btn-nav-login">Sign In</a>
+          <a href="/register.html" class="btn btn-primary btn-sm" id="btn-nav-register">Create Organization</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="main-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 75vh; max-width: 900px;">
+      <div class="role-badge role-admin" style="margin-bottom: 1.5rem; letter-spacing: 0.1em;">
+        ENTERPRISE ZERO-TRUST ARCHITECTURE
+      </div>
+      
+      <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.25rem; background: linear-gradient(135deg, #ffffff 40%, #00f5a0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Secure Document Sharing for High-Stakes Teams.
+      </h1>
+
+      <p style="font-size: 1.15rem; color: var(--text-secondary); max-width: 680px; margin-bottom: 2.5rem;">
+        Single-application architecture designed for bulletproof tenant isolation, strict role-based authorization, private streaming, and administrative audit trails.
+      </p>
+
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem;">
+        <a href="/register.html" class="btn btn-primary" style="padding: 0.85rem 1.75rem; font-size: 1rem;" id="cta-get-started">
+          Get Started with TrustVault
+        </a>
+        <a href="/login.html" class="btn btn-secondary" style="padding: 0.85rem 1.75rem; font-size: 1rem;" id="cta-sign-in">
+          Sign In to Your Vault
+        </a>
+      </div>
+
+      <!-- Live Architecture Pillars -->
+      <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; width: 100%; text-align: left;" aria-label="Key Architectural Capabilities">
+        <div class="panel" style="margin-bottom: 0;">
+          <div style="font-size: 1.5rem; margin-bottom: 0.75rem;">🛡</div>
+          <h2 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Multi-Tenant Isolation</h2>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            Enforced database-level scoping guarantees no cross-organization data leakage. Every file, share, and query is bound to your organization.
+          </p>
+        </div>
+
+        <div class="panel" style="margin-bottom: 0;">
+          <div style="font-size: 1.5rem; margin-bottom: 0.75rem;">⚡</div>
+          <h2 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Role-Based Access</h2>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            Admin, Editor, and Viewer permissions enforced on every single request. Immediate revocation removes file access without latency.
+          </p>
+        </div>
+
+        <div class="panel" style="margin-bottom: 0;">
+          <div style="font-size: 1.5rem; margin-bottom: 0.75rem;">📜</div>
+          <h2 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Administrative Audit Trail</h2>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            Full logging of authentication attempts, document previews, downloads, deletions, and permission changes with zero tampering APIs.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="border-top: 1px solid var(--border-subtle); padding: 1.5rem 2rem; text-align: center; font-size: 0.825rem; color: var(--text-muted);">
+      TrustVault &copy; 2026. Single-Application Architecture. Engineered for High-Security Document Collaboration.
+    </footer>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    window.TrustVault.onReady(() => {
+      // Check session once without forcing login redirect
+      window.TrustVault.auth.init({
+        requireAuth: false,
+        onReady: (user) => {
+          if (user) {
+            const navActions = document.getElementById('nav-actions');
+            if (navActions) {
+              navActions.innerHTML = `
+                <a href="/dashboard.html" class="btn btn-primary btn-sm">Go to Dashboard &rarr;</a>
+              `;
+            }
+            const ctaBtn = document.getElementById('cta-get-started');
+            if (ctaBtn) {
+              ctaBtn.textContent = 'Go to Dashboard';
+              ctaBtn.href = '/dashboard.html';
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

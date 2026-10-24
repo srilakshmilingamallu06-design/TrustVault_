@@ -1,0 +1,32 @@
+{
+  "name": "trustvault",
+  "version": "1.0.0",
+  "description": "Secure multi-tenant document-sharing platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test tests/**/*.test.js",
+    "test:e2e": "node tests/verify_all.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [
+    "document-sharing",
+    "multi-tenant",
+    "security",
+    "rbac",
+    "zero-trust"
+  ],
+  "author": "TrustVault",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^8.7.1",
+    "express-session": "^1.18.1",
+    "multer": "^1.4.5-lts.1"
+  }
+}

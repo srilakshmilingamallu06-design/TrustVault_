@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Repository | TrustVault</title>
+  <meta name="description" content="Secure multi-tenant document repository with role-based access, preview, sharing, and auditing.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Navbar -->
+    <header>
+      <nav class="navbar" aria-label="Main Navigation">
+        <a href="/dashboard.html" class="nav-brand">
+          <div class="brand-icon">T</div>
+          <span>TrustVault</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/dashboard.html" class="nav-link">Dashboard</a></li>
+          <li><a href="/documents.html" class="nav-link active">Documents</a></li>
+          <li><a href="/members.html" class="nav-link" id="nav-members-link" style="display: none;">Members</a></li>
+          <li><a href="/audit.html" class="nav-link" id="nav-audit-link" style="display: none;">Audit Trail</a></li>
+        </ul>
+
+        <div class="nav-right">
+          <div class="user-profile-badge">
+            <div class="user-meta">
+              <span class="user-name" id="nav-user-name">Loading...</span>
+              <span class="org-name" id="nav-org-name">Organization</span>
+            </div>
+            <span class="role-badge role-admin" id="nav-role-badge">ADMIN</span>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-logout" title="Sign out of TrustVault">Sign Out</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Section Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 class="panel-title" style="font-size: 1.85rem;">Document Repository</h1>
+          <p class="panel-subtitle">Multi-tenant encrypted document storage with real-time role enforcement.</p>
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary" id="btn-open-upload" style="display: none;">
+            + Upload Document
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div class="panel" style="padding: 1.25rem 1.75rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 260px;">
+            <input type="text" id="input-search" class="form-control" placeholder="Search by document title or filename...">
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <label for="select-sort" class="form-label" style="margin-bottom: 0; white-space: nowrap; color: var(--text-secondary); font-size: 0.85rem;">Sort by:</label>
+            <select id="select-sort" class="form-control" style="width: auto; padding: 0.5rem 0.85rem; font-size: 0.875rem;">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="title-asc">Title (A-Z)</option>
+              <option value="size-desc">Size (Largest)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Repository Table -->
+      <section class="panel" style="padding: 0; overflow: hidden;" aria-label="Documents List">
+        <div class="table-container">
+          <table id="table-documents">
+            <thead>
+              <tr>
+                <th style="min-width: 240px;">Title &amp; Filename</th>
+                <th style="width: 110px;">Size</th>
+                <th style="min-width: 140px;">Uploader</th>
+                <th style="width: 140px;">Upload Date</th>
+                <th style="width: 130px;">Access / Status</th>
+                <th style="width: 220px; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-documents">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                  <span class="spinner"></span> Loading secure repository records...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Upload Document Modal -->
+    <div class="modal-overlay" id="modal-upload" role="dialog" aria-modal="true" aria-labelledby="modal-upload-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-upload-title">Upload Document to Vault</h2>
+          <button type="button" class="modal-close" id="btn-close-upload" aria-label="Close modal">&times;</button>
+        </div>
+
+        <form id="form-upload-document">
+          <div class="modal-body">
+            <div class="dropzone" id="modal-dropzone">
+              <div class="dropzone-icon">📁</div>
+              <div class="dropzone-text" id="modal-dropzone-text">Click or drag &amp; drop file here</div>
+              <div class="dropzone-hint">PDF, Images, Markdown, Text, JSON, DOCX up to 20MB</div>
+              <input type="file" id="modal-file-input" style="display: none;" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.svg,.txt,.md,.json,.csv,.xml,.doc,.docx" required>
+            </div>
+
+            <div class="form-group" style="margin-top: 1.25rem;">
+              <label for="input-doc-title" class="form-label">Document Title (Optional)</label>
+              <input type="text" id="input-doc-title" class="form-control" placeholder="e.g. Critical Infrastructure Blueprint">
+            </div>
+
+            <div id="upload-alert" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-top: 1rem; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: var(--status-danger);">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-upload">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-upload">
+              Upload Document
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Document Preview Modal -->
+    <div class="modal-overlay" id="modal-preview" role="dialog" aria-modal="true" aria-labelledby="modal-preview-title">
+      <div class="modal-card" style="max-width: 850px;">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="modal-preview-title">Document Preview</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;" id="modal-preview-subtitle">Private streamed preview</p>
+          </div>
+          <button type="button" class="modal-close" id="btn-close-preview" aria-label="Close modal">&times;</button>
+        </div>
+
+        <div class="modal-body" style="padding: 1rem;">
+          <div class="preview-container" id="preview-content">
+            <span class="spinner"></span> Loading preview...
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <a href="#" class="btn btn-primary" id="btn-preview-download" download>Download File</a>
+          <button type="button" class="btn btn-secondary" id="btn-dismiss-preview">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Document Modal -->
+    <div class="modal-overlay" id="modal-share" role="dialog" aria-modal="true" aria-labelledby="modal-share-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="modal-share-title">Manage Document Sharing</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;" id="modal-share-doc-name">Document Title</p>
+          </div>
+          <button type="button" class="modal-close" id="btn-close-share" aria-label="Close modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form id="form-add-share" style="margin-bottom: 2rem;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+              Share with Organization Colleague
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 120px; gap: 0.75rem; margin-bottom: 1rem;">
+              <div>
+                <label for="select-share-member" class="form-label" style="font-size: 0.8rem;">Select Member</label>
+                <select id="select-share-member" class="form-control" required>
+                  <option value="">Choose a member...</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="select-share-perm" class="form-label" style="font-size: 0.8rem;">Permission</label>
+                <select id="select-share-perm" class="form-control">
+                  <option value="view">Viewer</option>
+                  <option value="edit">Editor</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-share" style="width: 100%;">
+              Grant Access
+            </button>
+          </form>
+
+          <div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+              Current Document Shares
+            </div>
+
+            <div id="shares-list-container" style="max-height: 220px; overflow-y: auto;">
+              <div style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+                <span class="spinner"></span> Loading current shares...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-dismiss-share">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="modal-delete" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
+      <div class="modal-card" style="max-width: 460px;">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-delete-title" style="color: var(--status-danger);">Confirm Deletion</h2>
+          <button type="button" class="modal-close" id="btn-close-delete" aria-label="Close modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <p style="color: var(--text-primary); margin-bottom: 1rem;">
+            Are you sure you want to permanently delete this document:
+          </p>
+          <div style="padding: 0.75rem 1rem; background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: var(--radius-sm); margin-bottom: 1.25rem;">
+            <strong id="delete-doc-name" style="color: var(--status-danger);">Document</strong>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            This will remove the database metadata record and completely delete the physical file from private vault storage. This action is irreversible.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-delete">Cancel</button>
+          <button type="button" class="btn btn-danger" id="btn-confirm-delete">Delete Permanently</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/documents.js"></script>
+</body>
+</html>

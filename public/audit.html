@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrative Audit Trail | TrustVault</title>
+  <meta name="description" content="Immutable compliance audit trail of all access, modifications, and authentications.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Navbar -->
+    <header>
+      <nav class="navbar" aria-label="Main Navigation">
+        <a href="/dashboard.html" class="nav-brand">
+          <div class="brand-icon">T</div>
+          <span>TrustVault</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="/dashboard.html" class="nav-link">Dashboard</a></li>
+          <li><a href="/documents.html" class="nav-link">Documents</a></li>
+          <li><a href="/members.html" class="nav-link" id="nav-members-link">Members</a></li>
+          <li><a href="/audit.html" class="nav-link active" id="nav-audit-link">Audit Trail</a></li>
+        </ul>
+
+        <div class="nav-right">
+          <div class="user-profile-badge">
+            <div class="user-meta">
+              <span class="user-name" id="nav-user-name">Loading...</span>
+              <span class="org-name" id="nav-org-name">Organization</span>
+            </div>
+            <span class="role-badge role-admin" id="nav-role-badge">ADMIN</span>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-logout" title="Sign out of TrustVault">Sign Out</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 class="panel-title" style="font-size: 1.85rem;">Administrative Audit Trail</h1>
+          <p class="panel-subtitle">Comprehensive event logging of authentication, previews, downloads, shares, and administrative actions.</p>
+        </div>
+      </div>
+
+      <!-- Filters Toolbar -->
+      <div class="panel" style="padding: 1.25rem 1.75rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+          <div>
+            <label for="filter-action" class="form-label" style="font-size: 0.8rem; margin-bottom: 0.25rem;">Filter by Action</label>
+            <select id="filter-action" class="form-control" style="width: auto; min-width: 180px;">
+              <option value="">All Actions</option>
+              <option value="login_success">login_success</option>
+              <option value="login_failed">login_failed</option>
+              <option value="logout">logout</option>
+              <option value="user_registered">user_registered</option>
+              <option value="document_uploaded">document_uploaded</option>
+              <option value="document_previewed">document_previewed</option>
+              <option value="document_downloaded">document_downloaded</option>
+              <option value="document_shared">document_shared</option>
+              <option value="share_revoked">share_revoked</option>
+              <option value="document_deleted">document_deleted</option>
+              <option value="member_added">member_added</option>
+              <option value="role_updated">role_updated</option>
+              <option value="member_removed">member_removed</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="filter-outcome" class="form-label" style="font-size: 0.8rem; margin-bottom: 0.25rem;">Outcome</label>
+            <select id="filter-outcome" class="form-control" style="width: auto; min-width: 130px;">
+              <option value="">All</option>
+              <option value="success">Success</option>
+              <option value="failure">Failure</option>
+            </select>
+          </div>
+
+          <div style="margin-top: 1.25rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-filters">
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit Logs Table -->
+      <section class="panel" style="padding: 0; overflow: hidden;" aria-label="Audit Events List">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 170px;">Timestamp</th>
+                <th style="min-width: 160px;">Actor / Identity</th>
+                <th style="width: 160px;">Action</th>
+                <th style="width: 110px;">Resource</th>
+                <th style="width: 100px;">Outcome</th>
+                <th style="width: 130px;">Client IP</th>
+                <th style="text-align: right; width: 100px;">Details</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-audit">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                  <span class="spinner"></span> Loading compliance logs...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Details Modal -->
+    <div class="modal-overlay" id="modal-audit-details" role="dialog" aria-modal="true" aria-labelledby="modal-audit-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-audit-title">Audit Log Event Payload</h2>
+          <button type="button" class="modal-close" id="btn-close-details" aria-label="Close modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <pre id="audit-details-json" style="background: #080c14; padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); color: var(--text-primary); font-family: monospace; font-size: 0.85rem; overflow-x: auto; white-space: pre-wrap;"></pre>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-dismiss-details">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/audit.js"></script>
+</body>
+</html>
